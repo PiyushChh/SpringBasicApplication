@@ -1,5 +1,9 @@
 package com.piyush.ui.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
@@ -25,6 +29,8 @@ import jakarta.validation.Valid;
 @RequestMapping("/users")
 public class UserController {
 	
+	Map<String,UserRest> users;
+	
 	@GetMapping
 	public String getUser(@RequestParam(value="page",defaultValue = "1") int page,@RequestParam(value="limit",defaultValue="50") int limit) {
 		
@@ -32,18 +38,25 @@ public class UserController {
 	}
 	
 	
-	@GetMapping(path="/{userId}")
+	@GetMapping(path="/{userId}",produces={MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
 	public ResponseEntity<UserRest> getUser(@PathVariable("userId") String userId) {
 		
-		UserRest returnValue=new UserRest();
-		returnValue.setFirstName("Piyush");
-		returnValue.setLastName("Chh");
-		returnValue.setEmail("p@gmail.com");
-		returnValue.setUserId(userId);
+//		UserRest returnValue=new UserRest();
+//		returnValue.setFirstName("Piyush");
+//		returnValue.setLastName("Chh");
+//		returnValue.setEmail("p@gmail.com");
+//		returnValue.setUserId(userId);
+		if(users!=null && users.containsKey(userId)) {
+			
+			return new ResponseEntity<>(users.get(userId),HttpStatus.OK);
+		}
+		else {
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		}
 		
 //		return new ResponseEntity<UserRest>(HttpStatus.BAD_REQUEST);
 		
-		return new ResponseEntity<UserRest>(returnValue,HttpStatus.OK);
+		
 		
 		
 		
@@ -61,6 +74,13 @@ public class UserController {
 		returnValue.setLastName(userDetails.getLastName());
 		returnValue.setEmail(userDetails.getEmail());
 		
+		
+		String userId=UUID.randomUUID().toString();
+		returnValue.setUserId(userId);
+		if(users==null) users=new HashMap<>();
+		
+		
+		users.put(userId, returnValue);
 		
 		return new ResponseEntity<UserRest>(returnValue,HttpStatus.OK);
 		
