@@ -100,9 +100,15 @@ public class UserController {
 		
 	}
 	
-	@DeleteMapping
-	public String deleteUser() {
-		return "Delete User was called";
+	@DeleteMapping(path="/{userId}")
+	public ResponseEntity<Void> deleteUser(@PathVariable("userId") String userId) {
+		if(users.containsKey(userId)) {
+			users.remove(userId);
+			return ResponseEntity.noContent().build();
+		}
+		else {
+			return ResponseEntity.notFound().build();
 	}
 	
+}
 }
