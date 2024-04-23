@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.piyush.ui.model.request.UpdateUserDetailsRequestModel;
 import com.piyush.ui.model.request.UserDetailsRequestModel;
 import com.piyush.ui.model.response.UserRest;
 
@@ -86,9 +87,16 @@ public class UserController {
 		
 	}
 	
-	@PutMapping
-	public String updateUser() {
-		return "Update user called";
+	@PutMapping(path="/{userId}",consumes={MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},produces={MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+	public UserRest updateUser(@PathVariable("userId") String userId,@Valid @RequestBody UpdateUserDetailsRequestModel userDetails) {
+		
+		UserRest storedUserDetails=users.get(userId);
+		storedUserDetails.setFirstName(userDetails.getFirstName());
+		storedUserDetails.setLastName(userDetails.getLastName());
+		
+		users.put(userId,storedUserDetails);
+		
+		return storedUserDetails;
 		
 	}
 	
